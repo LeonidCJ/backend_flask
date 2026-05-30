@@ -14,6 +14,7 @@ if root_path not in sys.path:
 # Cargar variables de entorno desde .env
 load_dotenv()
 
+from config import Config
 from models.db_helpers import init_db
 from controllers.auth_controller import auth_bp
 from controllers.product_controller import product_bp
@@ -22,9 +23,10 @@ from controllers.web_controller import web_bp
 def create_app():
     """Crea y configura la aplicación Flask."""
     app = Flask(__name__)
-    
-    # Configuración base
-    app.secret_key = os.getenv('SECRET_KEY', 'techstore_secret_2026')
+    app.config.from_object(Config)
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', app.config['SECRET_KEY'])
+    app.config['DATABASE_PATH'] = os.getenv('DATABASE_PATH', app.config['DATABASE_PATH'])
+    app.secret_key = app.config['SECRET_KEY']
 
     # Habilitar CORS para permitir peticiones desde Flutter
     CORS(app)

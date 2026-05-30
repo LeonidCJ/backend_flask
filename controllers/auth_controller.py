@@ -9,7 +9,9 @@ auth_bp = Blueprint('auth_bp', __name__)
 @auth_bp.route('/api/login', methods=['POST'])
 def api_login():
     """Endpoint REST para login consumido desde Flutter."""
-    datos = request.get_json()
+    datos = request.get_json(silent=True)
+    if datos is None:
+        datos = request.form.to_dict()
 
     if not datos or 'username' not in datos or 'password' not in datos:
         return jsonify({'ok': False, 'mensaje': 'Datos incompletos'}), 400
